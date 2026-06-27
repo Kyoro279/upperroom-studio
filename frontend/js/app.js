@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:3000/api/produk';
+const API_BASE = 'https://upperroom-studio.vercel.app/api/produk';
 
 async function fetchAPI(url) {
     try {
@@ -23,11 +23,11 @@ function createCardHTML(produk) {
     } else if (typeof produk.gambar_url === 'string' && produk.gambar_url.trim() !== '') {
         mainImg = produk.gambar_url;
     }
-    
-    const media = produk.model3d 
+
+    const media = produk.model3d
         ? `<model-viewer src="${produk.model3d}" camera-controls auto-rotate touch-action="pan-y"></model-viewer>`
         : `<img src="${mainImg}" alt="${produk.nama}" class="detail-model" style="height:280px; object-fit:cover;">`;
-    
+
     return `
         <a href="detail-produk.html?id=${produk.id}" class="card">
             ${media}
@@ -70,9 +70,9 @@ async function muatKatalog() {
     let currentKategori = 'Semua';
     let currentKegunaan = 'Semua';
     let maxPrice = 385000;
-    
+
     const countEl = document.getElementById('product-count');
-    
+
     function render() {
         let filtered = produkList.filter(p => {
             const matchKat = currentKategori === 'Semua' || p.kategori === currentKategori;
@@ -93,7 +93,7 @@ async function muatKatalog() {
         } else {
             container.innerHTML = filtered.map(createCardHTML).join('');
         }
-        
+
         // Update sidebar counts
         const allKats = ['Semua', 'Dekorasi', 'Miniatur', 'Aksesoris', 'Custom'];
         allKats.forEach(kat => {
@@ -133,7 +133,7 @@ async function muatKatalog() {
             render();
         });
     }
-    
+
     const sortSelect = document.getElementById('sort-select');
     if (sortSelect) {
         sortSelect.addEventListener('change', render);
@@ -162,7 +162,7 @@ async function muatDetail() {
     }
 
     const fallbackImage = 'https://images.unsplash.com/photo-1612015900986-4c4d017d1648?auto=format&fit=crop&w=800&q=80';
-    
+
     let media = '';
     if (produk.model3d) {
         media = `<model-viewer src="${produk.model3d}" class="detail-model" camera-controls auto-rotate touch-action="pan-y"></model-viewer>`;
@@ -175,7 +175,7 @@ async function muatDetail() {
         } else {
             images = [fallbackImage];
         }
-            
+
         if (images.length > 1) {
             media = `
             <div class="slider-container" id="product-slider" data-images='${JSON.stringify(images)}' data-index="0">
@@ -186,7 +186,7 @@ async function muatDetail() {
             `;
             media += `<div class="thumbnail-gallery">`;
             images.forEach((img, i) => {
-                media += `<img src="${img}" class="thumbnail-img ${i===0 ? 'active':''}" onclick="setSlider(${i})" id="thumb-${i}">`;
+                media += `<img src="${img}" class="thumbnail-img ${i === 0 ? 'active' : ''}" onclick="setSlider(${i})" id="thumb-${i}">`;
             });
             media += `</div>`;
         } else {
@@ -246,7 +246,7 @@ async function muatKelola() {
         } else if (typeof p.gambar_url === 'string' && p.gambar_url.trim() !== '') {
             mainImg = p.gambar_url;
         }
-        
+
         return `
         <div class="admin-item">
             <img src="${mainImg}" alt="${p.nama}" class="admin-item-img">
@@ -319,7 +319,7 @@ function muatTambahProduk() {
             });
 
             if (!response.ok) throw new Error('Gagal menyimpan');
-            
+
             msg.innerText = 'Produk berhasil ditambahkan! Mengalihkan...';
             msg.style.color = 'green';
             setTimeout(() => {
@@ -395,7 +395,7 @@ async function muatEditProduk() {
             });
 
             if (!response.ok) throw new Error('Gagal menyimpan perubahan');
-            
+
             msg.innerText = 'Perubahan berhasil disimpan! Mengalihkan...';
             msg.style.color = 'green';
             setTimeout(() => {
@@ -409,40 +409,40 @@ async function muatEditProduk() {
 }
 
 // 8. Fungsi Slider Gambar
-window.ubahSlider = function(arah) {
+window.ubahSlider = function (arah) {
     const slider = document.getElementById('product-slider');
     if (!slider) return;
-    
+
     let images;
     try {
         images = JSON.parse(slider.getAttribute('data-images'));
     } catch (e) {
         return;
     }
-    
+
     let currentIndex = parseInt(slider.getAttribute('data-index'));
     currentIndex += arah;
-    
+
     if (currentIndex < 0) currentIndex = images.length - 1;
     if (currentIndex >= images.length) currentIndex = 0;
-    
+
     setSlider(currentIndex);
 }
 
-window.setSlider = function(index) {
+window.setSlider = function (index) {
     const slider = document.getElementById('product-slider');
     if (!slider) return;
-    
+
     let images;
     try {
         images = JSON.parse(slider.getAttribute('data-images'));
     } catch (e) {
         return;
     }
-    
+
     slider.setAttribute('data-index', index);
     document.getElementById('main-product-img').src = images[index];
-    
+
     document.querySelectorAll('.thumbnail-img').forEach(t => t.classList.remove('active'));
     const activeThumb = document.getElementById('thumb-' + index);
     if (activeThumb) activeThumb.classList.add('active');
@@ -457,7 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
     muatLogin();
     muatTambahProduk();
     muatEditProduk();
-    
+
     // Muat komponen terpisah
     muatHeader();
     muatFooter();
@@ -467,7 +467,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function muatFooter() {
     const placeholder = document.getElementById('footer-placeholder');
     if (!placeholder) return;
-    
+
     try {
         const response = await fetch('footer.html');
         if (response.ok) {
@@ -483,13 +483,13 @@ async function muatFooter() {
 async function muatHeader() {
     const placeholder = document.getElementById('header-placeholder');
     if (!placeholder) return;
-    
+
     try {
         const response = await fetch('header.html');
         if (response.ok) {
             const html = await response.text();
             placeholder.innerHTML = html;
-            
+
             // Set active class on navbar links
             let currentPage = window.location.pathname.split('/').pop() || 'index.html';
             const links = placeholder.querySelectorAll('.nav-links a');
