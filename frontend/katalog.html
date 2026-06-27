@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog - The Upper Room / 3D PRINT STUDIO</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+</head>
+
+<body>
+
+    <div id="header-placeholder"></div>
+
+    <main class="main-layout">
+        <div class="katalog-title-row">
+            <p class="section-tag">KATALOG PENUH</p>
+            <h2>Semua objek.</h2>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Cari produk, kategori, atau material...">
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+            <aside class="sidebar">
+                <div class="filter-group">
+                    <h3>KATEGORI</h3>
+                    <ul id="filter-kategori">
+                        <li><a href="#" class="active filter-btn" data-filter="Semua">— Semua <span
+                                    id="count-semua-kat">0</span></a></li>
+                        <li><a href="#" class="filter-btn" data-filter="Dekorasi">Dekorasi <span
+                                    id="count-dekorasi">0</span></a></li>
+                        <li><a href="#" class="filter-btn" data-filter="Miniatur">Miniatur <span
+                                    id="count-miniatur">0</span></a></li>
+                        <li><a href="#" class="filter-btn" data-filter="Aksesoris">Aksesoris <span
+                                    id="count-aksesoris">0</span></a></li>
+                        <li><a href="#" class="filter-btn" data-filter="Custom">Custom <span
+                                    id="count-custom">0</span></a></li>
+                    </ul>
+                </div>
+
+                <div class="filter-group">
+                    <h3>KEGUNAAN</h3>
+                    <ul id="filter-kegunaan">
+                        <li><a href="#" class="active filter-btn" data-filter="Semua">— Semua <span
+                                    id="count-semua-keg">0</span></a></li>
+                        <li><a href="#" class="filter-btn" data-filter="Rumah">Rumah <span id="count-rumah">0</span></a>
+                        </li>
+                        <li><a href="#" class="filter-btn" data-filter="Kantor">Kantor <span
+                                    id="count-kantor">0</span></a></li>
+                        <li><a href="#" class="filter-btn" data-filter="Hadiah">Hadiah <span
+                                    id="count-hadiah">0</span></a></li>
+                        <li><a href="#" class="filter-btn" data-filter="Hobi">Hobi <span id="count-hobi">0</span></a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="filter-group">
+                    <h3>HARGA MAKSIMUM</h3>
+                    <div class="price-filter-labels">
+                        <span>Rp 50.000</span>
+                        <span id="price-value">Rp 500.000</span>
+                    </div>
+                    <input type="range" id="price-slider" min="50000" max="500000" value="500000" step="5000"
+                        class="slider">
+                </div>
+            </aside>
+
+            <section class="catalog-content">
+                <div class="catalog-meta flex-between">
+                    <span id="product-count">0 produk</span>
+                    <div class="sort-container">
+                        <span class="sort-label">URUTKAN</span>
+                        <select id="sort-select">
+                            <option value="terbaru">Terbaru</option>
+                            <option value="termurah">Termurah</option>
+                            <option value="termahal">Termahal</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid-katalog" id="tempat-produk">
+                    <div class="loading">Memuat koleksi studio...</div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+
+</html>

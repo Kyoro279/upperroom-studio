@@ -1,0 +1,12 @@
+# Mengabaikan folder library/dependencies (Ukurannya sangat besar dan tidak perlu diunggah)
+node_modules/
+
+# Mengabaikan file yang menyimpan kunci rahasia/password API
+.env
+
+# Mengabaikan file log yang dihasilkan oleh Node.js atau npm
+npm-debug.log
+yarn-error.log
+
+# Mengabaikan file sistem bawaan (biasanya muncul jika Anda menggunakan Mac)
+.DS_Store
