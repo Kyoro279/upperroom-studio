@@ -108,6 +108,11 @@ app.put('/api/produk/:id', upload.array('gambar', 5), async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server Express berjalan lancar di http://localhost:${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Server Express berjalan lancar di http://localhost:${PORT}`);
+    });
+}
+
+// Tambahkan baris ini di paling akhir (wajib untuk Vercel):
+module.exports = app;
