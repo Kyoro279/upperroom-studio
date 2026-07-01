@@ -59,18 +59,18 @@ async function muatHeroKatalog() {
     container.innerHTML = `
         <div class="hero-katalog-grid">
             ${heroProducts.map(produk => {
-                let mainImg = fallbackImage;
-                if (Array.isArray(produk.gambar_url) && produk.gambar_url.length > 0) {
-                    mainImg = produk.gambar_url[0];
-                } else if (typeof produk.gambar_url === 'string' && produk.gambar_url.trim() !== '') {
-                    mainImg = produk.gambar_url;
-                }
-                return `
+        let mainImg = fallbackImage;
+        if (Array.isArray(produk.gambar_url) && produk.gambar_url.length > 0) {
+            mainImg = produk.gambar_url[0];
+        } else if (typeof produk.gambar_url === 'string' && produk.gambar_url.trim() !== '') {
+            mainImg = produk.gambar_url;
+        }
+        return `
                     <a href="detail-produk.html?id=${produk.id}" class="hero-katalog-item">
                         <img src="${mainImg}" alt="${produk.nama}" class="hero-katalog-img">
                     </a>
                 `;
-            }).join('')}
+    }).join('')}
         </div>
     `;
 }
@@ -90,6 +90,14 @@ async function muatBeranda() {
     const terbaru = produkList.sort((a, b) => b.id - a.id).slice(0, 4);
     container.innerHTML = terbaru.map(createCardHTML).join('');
 }
+
+// Cek apakah user sudah login
+supabase.auth.onAuthStateChange((event, session) => {
+    if (!session) {
+        // Jika tidak ada session (belum login), tendang ke halaman lain
+        window.location.href = '/login.html';
+    }
+});
 
 // 2. Fungsi Katalog dengan Filter
 async function muatKatalog() {
