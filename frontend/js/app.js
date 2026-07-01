@@ -92,15 +92,17 @@ async function muatBeranda() {
 }
 
 // Cek apakah user sudah login hanya untuk halaman admin
-supabase.auth.onAuthStateChange((event, session) => {
-    const adminPages = ['kelola.html', 'tambah-produk.html', 'edit-produk.html', 'admin.html'];
-    const currentPage = window.location.pathname.split('/').pop();
-    
-    if (!session && adminPages.includes(currentPage)) {
-        // Jika tidak ada session (belum login) dan berada di halaman admin, tendang ke login
-        window.location.href = 'login.html';
-    }
-});
+if (typeof supabase !== 'undefined') {
+    supabase.auth.onAuthStateChange((event, session) => {
+        const adminPages = ['kelola.html', 'tambah-produk.html', 'edit-produk.html', 'admin.html'];
+        const currentPage = window.location.pathname.split('/').pop();
+        
+        if (!session && adminPages.includes(currentPage)) {
+            // Jika tidak ada session (belum login) dan berada di halaman admin, tendang ke login
+            window.location.href = 'admin.html';
+        }
+    });
+}
 
 // 2. Fungsi Katalog dengan Filter
 async function muatKatalog() {
@@ -277,13 +279,15 @@ async function muatKelola() {
     const container = document.getElementById('tempat-kelola');
     if (!container) return;
 
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-        window.location.href = 'login.html';
-        return;
+    let token = '';
+    if (typeof supabase !== 'undefined') {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+            window.location.href = 'admin.html';
+            return;
+        }
+        token = session.access_token;
     }
-
-    const token = session.access_token;
     
     const produkList = await fetchAPI(API_BASE, {
         headers: {
@@ -333,15 +337,19 @@ function muatLogin() {
         const password = document.getElementById('password').value;
 
         try {
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: password
-            });
+            if (typeof supabase !== 'undefined') {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
 
-            if (error) {
-                alert('Login gagal: ' + error.message);
+                if (error) {
+                    alert('Login gagal: ' + error.message);
+                } else {
+                    window.location.href = 'kelola.html';
+                }
             } else {
-                window.location.href = 'kelola.html';
+                alert('Sistem Supabase belum diinisialisasi di frontend.');
             }
         } catch (err) {
             console.error("Error saat login:", err);
@@ -380,8 +388,11 @@ function muatTambahProduk() {
         }
 
         try {
-            const { data: { session } } = await supabase.auth.getSession();
-            const token = session ? session.access_token : '';
+            let token = '';
+            if (typeof supabase !== 'undefined') {
+                const { data: { session } } = await supabase.auth.getSession();
+                token = session ? session.access_token : '';
+            }
 
             const response = await fetch(API_BASE, {
                 method: 'POST',
@@ -464,8 +475,11 @@ async function muatEditProduk() {
         }
 
         try {
-            const { data: { session } } = await supabase.auth.getSession();
-            const token = session ? session.access_token : '';
+            let token = '';
+            if (typeof supabase !== 'undefined') {
+                const { data: { session } } = await supabase.auth.getSession();
+                token = session ? session.access_token : '';
+            }
 
             const response = await fetch(`${API_BASE}/${id}`, {
                 method: 'PUT',
