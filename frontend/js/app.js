@@ -640,9 +640,9 @@ function initScrollAnimation() {
     }, { threshold: 0.1 });
 
     const setupElements = () => {
-        const elements = document.querySelectorAll('.card:not(.animate-on-scroll), .hero-katalog-item:not(.animate-on-scroll), .admin-item:not(.animate-on-scroll), .hero-text:not(.animate-on-scroll), .tentang-content:not(.animate-on-scroll)');
+        const elements = document.querySelectorAll('.card:not(.is-observed), .hero-katalog-item:not(.is-observed), .admin-item:not(.is-observed), .hero-text:not(.is-observed), .tentang-content:not(.is-observed)');
         elements.forEach(el => {
-            el.classList.add('animate-on-scroll');
+            el.classList.add('animate-on-scroll', 'is-observed');
             observer.observe(el);
         });
     };
