@@ -66,6 +66,15 @@ body {
     color: #111111;
 }
 
+.nav-auth a.btn-logout-header {
+    color: #c94c4c;
+    font-weight: 500;
+}
+
+.nav-auth a.btn-logout-header:hover {
+    color: #a33838;
+}
+
 /* HERO SECTION */
 .hero-section {
     display: flex;

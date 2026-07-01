@@ -327,37 +327,7 @@ async function muatKelola() {
     }).join('');
 }
 
-// 5. Fungsi Login Sementara
-function muatLogin() {
-    const loginForm = document.querySelector('.login-form');
-    if (!loginForm) return;
 
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
-        try {
-            if (typeof supabase !== 'undefined') {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-
-                if (error) {
-                    alert('Login gagal: ' + error.message);
-                } else {
-                    window.location.href = 'kelola.html';
-                }
-            } else {
-                alert('Sistem Supabase belum diinisialisasi di frontend.');
-            }
-        } catch (err) {
-            console.error("Error saat login:", err);
-            alert('Terjadi kesalahan saat login.');
-        }
-    });
-}
 
 // 6. Fungsi Tambah Produk
 function muatTambahProduk() {
@@ -551,7 +521,6 @@ document.addEventListener('DOMContentLoaded', () => {
     muatKatalog();
     muatDetail();
     muatKelola();
-    muatLogin();
     muatTambahProduk();
     muatEditProduk();
 
@@ -605,8 +574,17 @@ async function muatHeader() {
                 if (navAuth) {
                     navAuth.innerHTML = `
                         <a href="kelola.html" class="active">Admin</a>
-                        <a href="index.html">Keluar</a>
+                        <a href="#" id="headerBtnLogout" class="btn-logout-header">Keluar</a>
                     `;
+                    
+                    const headerBtnLogout = document.getElementById('headerBtnLogout');
+                    if (headerBtnLogout && typeof supabase !== 'undefined') {
+                        headerBtnLogout.addEventListener('click', async (e) => {
+                            e.preventDefault();
+                            await supabase.auth.signOut();
+                            window.location.href = 'index.html';
+                        });
+                    }
                 }
             }
         }
