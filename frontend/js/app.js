@@ -1,8 +1,8 @@
 const API_BASE = 'https://upperroom-studio.vercel.app/api/produk';
 
-async function fetchAPI(url) {
+async function fetchAPI(url, options = {}) {
     try {
-        const response = await fetch(url);
+        const response = await fetch(url, options);
         if (!response.ok) throw new Error('Jaringan bermasalah');
         return await response.json();
     } catch (error) {
@@ -91,11 +91,14 @@ async function muatBeranda() {
     container.innerHTML = terbaru.map(createCardHTML).join('');
 }
 
-// Cek apakah user sudah login
+// Cek apakah user sudah login hanya untuk halaman admin
 supabase.auth.onAuthStateChange((event, session) => {
-    if (!session) {
-        // Jika tidak ada session (belum login), tendang ke halaman lain
-        window.location.href = '/login.html';
+    const adminPages = ['kelola.html', 'tambah-produk.html', 'edit-produk.html', 'admin.html'];
+    const currentPage = window.location.pathname.split('/').pop();
+    
+    if (!session && adminPages.includes(currentPage)) {
+        // Jika tidak ada session (belum login) dan berada di halaman admin, tendang ke login
+        window.location.href = 'login.html';
     }
 });
 
@@ -274,7 +277,20 @@ async function muatKelola() {
     const container = document.getElementById('tempat-kelola');
     if (!container) return;
 
-    const produkList = await fetchAPI(API_BASE);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    const token = session.access_token;
+    
+    const produkList = await fetchAPI(API_BASE, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
     if (!produkList || produkList.length === 0) {
         container.innerHTML = '<div class="loading">Belum ada produk di database.</div>';
         return;
@@ -311,15 +327,25 @@ function muatLogin() {
     const loginForm = document.querySelector('.login-form');
     if (!loginForm) return;
 
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
 
-        if (email === 'admin@theupperroom.id' && password === 'admin123') {
-            window.location.href = 'kelola.html';
-        } else {
-            alert('Email atau password salah! (Gunakan: admin@theupperroom.id / admin123)');
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if (error) {
+                alert('Login gagal: ' + error.message);
+            } else {
+                window.location.href = 'kelola.html';
+            }
+        } catch (err) {
+            console.error("Error saat login:", err);
+            alert('Terjadi kesalahan saat login.');
         }
     });
 }
@@ -354,8 +380,14 @@ function muatTambahProduk() {
         }
 
         try {
+            const { data: { session } } = await supabase.auth.getSession();
+            const token = session ? session.access_token : '';
+
             const response = await fetch(API_BASE, {
                 method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
                 // Do NOT set Content-Type header when sending FormData!
                 // Fetch will automatically set it to multipart/form-data with the correct boundary
                 body: formData
@@ -432,8 +464,14 @@ async function muatEditProduk() {
         }
 
         try {
+            const { data: { session } } = await supabase.auth.getSession();
+            const token = session ? session.access_token : '';
+
             const response = await fetch(`${API_BASE}/${id}`, {
                 method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
                 body: formData
             });
 
