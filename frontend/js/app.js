@@ -91,15 +91,15 @@ async function muatBeranda() {
     container.innerHTML = terbaru.map(createCardHTML).join('');
 }
 
-// Cek apakah user sudah login hanya untuk halaman admin
+// Cek apakah user sudah login hanya untuk halaman admin (tambah/edit)
 if (typeof supabase !== 'undefined') {
     supabase.auth.onAuthStateChange((event, session) => {
-        const adminPages = ['kelola.html', 'tambah-produk.html', 'edit-produk.html', 'admin.html'];
+        const adminPages = ['tambah-produk.html', 'edit-produk.html'];
         const currentPage = window.location.pathname.split('/').pop();
         
         if (!session && adminPages.includes(currentPage)) {
-            // Jika tidak ada session (belum login) dan berada di halaman admin, tendang ke login
-            window.location.href = 'admin.html';
+            // Jika tidak ada session (belum login) dan berada di halaman admin terproteksi, tendang ke kelola
+            window.location.href = 'kelola.html';
         }
     });
 }
@@ -283,7 +283,8 @@ async function muatKelola() {
     if (typeof supabase !== 'undefined') {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
-            window.location.href = 'admin.html';
+            // Karena kelola.html sekarang menghandle login, jangan redirect di sini.
+            // Biarkan script di kelola.html yang menampilkan form login.
             return;
         }
         token = session.access_token;

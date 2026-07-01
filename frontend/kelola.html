@@ -6,20 +6,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola - The Upper Room / 3D PRINT STUDIO</title>
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Muat Library Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
 
     <div id="header-placeholder"></div>
 
-    <main class="main-layout admin-layout">
+    <!-- KOTAK LOGIN (Tampil jika belum login) -->
+    <main id="login-container" class="login-layout" style="display: none;">
+        <div class="login-card">
+            <p class="section-tag">AKSES STUDIO</p>
+            <h1 class="login-title">Masuk</h1>
+            <p class="login-subtitle">Halaman ini hanya untuk owner studio.</p>
+
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="email">EMAIL</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">PASSWORD</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn-block btn-dark"
+                    style="padding:15px; border:none; color:#fff; background:#111; cursor:pointer;">Masuk</button>
+            </form>
+
+            <div class="login-footer">
+                <a href="index.html">&larr; Kembali ke Beranda</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- KOTAK ADMIN PANEL (Tampil jika sudah login) -->
+    <main id="admin-container" class="main-layout admin-layout" style="display: none;">
         <div class="admin-header">
             <div>
                 <p class="section-tag">OWNER PANEL</p>
                 <h2>Kelola katalog</h2>
             </div>
-            <a href="tambah-produk.html" class="btn-dark" style="text-decoration:none; display:inline-block; padding:15px 30px;">+ Produk baru</a>
+            <div>
+                <button id="btnLogout" class="btn-dark"
+                    style="margin-right:10px; background:#c94c4c; border:none; color:white; padding:15px 30px; cursor:pointer;">Keluar</button>
+                <a href="tambah-produk.html" class="btn-dark"
+                    style="text-decoration:none; display:inline-block; padding:15px 30px;">+ Produk baru</a>
+            </div>
         </div>
 
         <div class="admin-list" id="tempat-kelola">
@@ -28,6 +65,78 @@
         </div>
     </main>
 
+    <!-- Logika Autentikasi dan Render -->
+    <script>
+        // INISIALISASI SUPABASE (Ganti KODE_URL dan KODE_ANON_KEY di sini)
+        const SUPABASE_URL = 'https://gtlsymjqeutdolhjlqnv.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_34Sq2OOf2YEAv9KWgjIowg_n_XtrUc4';
+        window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const loginContainer = document.getElementById('login-container');
+            const adminContainer = document.getElementById('admin-container');
+            const loginForm = document.getElementById('loginForm');
+            const btnLogout = document.getElementById('btnLogout');
+
+            // 1. Cek Sesi Saat Halaman Dimuat
+            const { data: { session } } = await window.supabase.auth.getSession();
+
+            if (session) {
+                // SUDAH LOGIN: Tampilkan panel admin, sembunyikan login
+                loginContainer.style.display = 'none';
+                adminContainer.style.display = 'block';
+            } else {
+                // BELUM LOGIN: Tampilkan form login, sembunyikan panel admin (proteksi UI)
+                loginContainer.style.display = 'flex';
+                adminContainer.style.display = 'none';
+            }
+
+            // 2. Tangani Proses Submit Login
+            if (loginForm) {
+                loginForm.addEventListener('submit', async (e) => {
+                    // Mencegah form reload bawaan browser (agar password/email tidak bocor ke URL)
+                    e.preventDefault();
+
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
+
+                    try {
+                        const { data, error } = await window.supabase.auth.signInWithPassword({
+                            email: email,
+                            password: password
+                        });
+
+                        if (error) {
+                            // Login Gagal
+                            alert("Akses Ditolak: Email atau Password Salah!");
+                        } else {
+                            // Login Sukses
+                            loginForm.reset();
+                            loginContainer.style.display = 'none';
+                            adminContainer.style.display = 'block';
+
+                            // Muat ulang halaman supaya app.js melakukan fetch data produk
+                            // dengan menggunakan token autentikasi yang baru saja dibuat.
+                            window.location.reload();
+                        }
+                    } catch (err) {
+                        console.error("Error saat login:", err);
+                        alert("Terjadi kesalahan sistem saat mencoba login.");
+                    }
+                });
+            }
+
+            // 3. Tangani Proses Logout
+            if (btnLogout) {
+                btnLogout.addEventListener('click', async () => {
+                    await window.supabase.auth.signOut();
+                    window.location.reload(); // Muat ulang setelah logout agar sesi terhapus
+                });
+            }
+        });
+    </script>
+
+    <!-- Script Utama (tetap dipertahankan untuk memuat daftar produk) -->
     <script type="module" src="js/app.js"></script>
 </body>
 
