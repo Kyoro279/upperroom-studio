@@ -40,7 +40,42 @@ function createCardHTML(produk) {
     `;
 }
 
-// 1. Fungsi Beranda (Index)
+// 1. Fungsi Hero Katalog
+async function muatHeroKatalog() {
+    const container = document.getElementById('tempat-hero-katalog');
+    if (!container) return;
+
+    const produkList = await fetchAPI(API_BASE);
+    if (!produkList || produkList.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+
+    // Ambil beberapa produk untuk hero (misalnya 4 produk terbaru)
+    const heroProducts = produkList.sort((a, b) => b.id - a.id).slice(0, 4);
+
+    const fallbackImage = 'https://images.unsplash.com/photo-1612015900986-4c4d017d1648?auto=format&fit=crop&w=400&q=80';
+
+    container.innerHTML = `
+        <div class="hero-katalog-grid">
+            ${heroProducts.map(produk => {
+                let mainImg = fallbackImage;
+                if (Array.isArray(produk.gambar_url) && produk.gambar_url.length > 0) {
+                    mainImg = produk.gambar_url[0];
+                } else if (typeof produk.gambar_url === 'string' && produk.gambar_url.trim() !== '') {
+                    mainImg = produk.gambar_url;
+                }
+                return `
+                    <a href="detail-produk.html?id=${produk.id}" class="hero-katalog-item">
+                        <img src="${mainImg}" alt="${produk.nama}" class="hero-katalog-img">
+                    </a>
+                `;
+            }).join('')}
+        </div>
+    `;
+}
+
+// 2. Fungsi Beranda (Index)
 async function muatBeranda() {
     const container = document.getElementById('tempat-produk-terbaru');
     if (!container) return;
@@ -450,6 +485,7 @@ window.setSlider = function (index) {
 
 // Routing sederhana saat halaman dimuat
 document.addEventListener('DOMContentLoaded', () => {
+    muatHeroKatalog();
     muatBeranda();
     muatKatalog();
     muatDetail();
