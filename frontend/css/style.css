@@ -201,6 +201,11 @@ body {
 .card {
     display: flex;
     flex-direction: column;
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    border: 1px solid #f2f2f2;
 }
 
 model-viewer {
@@ -210,6 +215,10 @@ model-viewer {
     margin-bottom: 15px;
 }
 
+.card model-viewer, .card .detail-model {
+    margin-bottom: 0;
+}
+
 .card-tag {
     font-size: 10px;
     letter-spacing: 1.5px;
@@ -217,12 +226,14 @@ model-viewer {
     text-transform: uppercase;
     margin-top: 15px;
     margin-bottom: 6px;
+    padding: 0 20px;
 }
 
 .card-title-row {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    padding: 0 20px 20px 20px;
 }
 
 .card h4 {
@@ -680,10 +691,6 @@ model-viewer {
 a.card {
     text-decoration: none;
     color: inherit;
-    transition: opacity 0.3s;
-}
-a.card:hover {
-    opacity: 0.8;
 }
 
 /* Hero Catalog Container Styles */
@@ -711,12 +718,7 @@ a.card:hover {
     width: 100%;
     overflow: hidden;
     background-color: #f7f7f7;
-    border-radius: 4px;
-    transition: opacity 0.3s ease;
-}
-
-.hero-katalog-item:hover {
-    opacity: 0.8;
+    border-radius: 16px;
 }
 
 .hero-katalog-img {
