@@ -104,7 +104,11 @@
 
                         if (error) {
                             // Login Gagal
-                            alert("Akses Ditolak: Email atau Password Salah!");
+                            if (window.tampilkanToast) {
+                                window.tampilkanToast("Akses Ditolak: Email atau Password Salah!", "error");
+                            } else {
+                                alert("Akses Ditolak: Email atau Password Salah!");
+                            }
                         } else {
                             // Login Sukses
                             loginForm.reset();
@@ -117,7 +121,11 @@
                         }
                     } catch (err) {
                         console.error("Error saat login:", err);
-                        alert("Terjadi kesalahan sistem saat mencoba login.");
+                        if (window.tampilkanToast) {
+                            window.tampilkanToast("Terjadi kesalahan sistem saat mencoba login.", "error");
+                        } else {
+                            alert("Terjadi kesalahan sistem saat mencoba login.");
+                        }
                     }
                 });
             }

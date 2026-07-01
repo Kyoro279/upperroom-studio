@@ -899,3 +899,91 @@ a.card:hover {
 .slider-btn.next {
     right: 10px;
 }
+
+/* ============================================================ */
+/* ANIMASI DAN INTERAKTIVITAS MODERN */
+/* ============================================================ */
+
+/* 1. Scroll Animations (Fade In Up) */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.animate-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 2. Micro-interactions (Hover Effects) */
+/* Kartu Produk / Katalog */
+.card, .hero-katalog-item, .admin-item {
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.card:hover, .hero-katalog-item:hover, .admin-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Tombol (Button Hover Effects) */
+.btn-dark {
+    transition: all 0.3s ease;
+}
+.btn-dark:hover {
+    background-color: #333 !important;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* 3. Toast Notifications */
+.toast-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.toast {
+    background: #111;
+    color: #fff;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    transform: translateX(100%);
+    animation: toastSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+.toast.toast-error { background: #c94c4c; }
+.toast.toast-success { background: #4ca154; }
+.toast.toast-info { background: #333; }
+
+.toast.toast-out {
+    animation: toastSlideOut 0.4s ease forwards;
+}
+
+@keyframes toastSlideIn {
+    to { transform: translateX(0); opacity: 1; }
+}
+@keyframes toastSlideOut {
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+/* 4. Skeleton Loading / Shimmer */
+.skeleton-loading {
+    background: #f6f7f8;
+    background: linear-gradient(90deg, #eee 8%, #f5f5f5 18%, #eee 33%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+    border-radius: 4px;
+}
+@keyframes shimmer {
+    to { background-position: -200% 0; }
+}

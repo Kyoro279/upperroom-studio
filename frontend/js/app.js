@@ -397,15 +397,15 @@ async function muatEditProduk() {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
     if (!id) {
-        alert('ID Produk tidak ditemukan!');
-        window.location.href = 'kelola.html';
+        if(window.tampilkanToast) window.tampilkanToast('ID Produk tidak ditemukan!', 'error');
+        setTimeout(() => window.location.href = 'kelola.html', 1500);
         return;
     }
 
     // Ambil data produk saat ini
     const produk = await fetchAPI(`${API_BASE}/${id}`);
     if (!produk) {
-        alert('Gagal mengambil data produk!');
+        if(window.tampilkanToast) window.tampilkanToast('Gagal mengambil data produk!', 'error');
         return;
     }
 
@@ -527,6 +527,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Muat komponen terpisah
     muatHeader();
     muatFooter();
+
+    // Inisialisasi animasi interaktif
+    initScrollAnimation();
 });
 
 // 9. Fungsi Muat Komponen Footer
@@ -591,4 +594,65 @@ async function muatHeader() {
     } catch (e) {
         console.error("Gagal memuat header:", e);
     }
+}
+
+// ==========================================
+// FITUR INTERAKTIF (TOAST & ANIMASI)
+// ==========================================
+
+window.tampilkanToast = function(pesan, tipe = 'info') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${tipe}`;
+    
+    // Icon based on type
+    let icon = 'ℹ️';
+    if (tipe === 'success') icon = '✅';
+    if (tipe === 'error') icon = '❌';
+
+    toast.innerHTML = `<span>${icon}</span> <span>${pesan}</span>`;
+    container.appendChild(toast);
+
+    // Hilangkan toast setelah 3 detik
+    setTimeout(() => {
+        toast.classList.add('toast-out');
+        toast.addEventListener('animationend', () => {
+            toast.remove();
+        });
+    }, 3000);
+}
+
+function initScrollAnimation() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    const setupElements = () => {
+        const elements = document.querySelectorAll('.card:not(.animate-on-scroll), .hero-katalog-item:not(.animate-on-scroll), .admin-item:not(.animate-on-scroll), .hero-text:not(.animate-on-scroll), .tentang-content:not(.animate-on-scroll)');
+        elements.forEach(el => {
+            el.classList.add('animate-on-scroll');
+            observer.observe(el);
+        });
+    };
+
+    // Run initially
+    setupElements();
+
+    // Observe DOM mutations to automatically animate newly added dynamic content
+    const mutationObserver = new MutationObserver(() => {
+        setupElements();
+    });
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
 }
