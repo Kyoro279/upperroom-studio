@@ -15,7 +15,7 @@ function formatHarga(harga) {
     return harga ? `Rp ${harga.toLocaleString('id-ID')}` : 'Hubungi Kami';
 }
 
-function createCardHTML(produk) {
+function createCardHTML(produk, index = 0) {
     const fallbackImage = 'https://images.unsplash.com/photo-1612015900986-4c4d017d1648?auto=format&fit=crop&w=400&q=80';
     let mainImg = fallbackImage;
     if (Array.isArray(produk.gambar_url) && produk.gambar_url.length > 0) {
@@ -29,7 +29,7 @@ function createCardHTML(produk) {
         : `<img src="${mainImg}" alt="${produk.nama}" class="detail-model" style="height:280px; object-fit:cover;">`;
 
     return `
-        <a href="detail-produk.html?id=${produk.id}" class="card">
+        <a href="detail-produk.html?id=${produk.id}" class="card animate-on-scroll" style="transition-delay: ${index * 0.08}s">
             ${media}
             <div class="card-tag">${produk.kategori || produk.bahan || 'DEKORASI'}</div>
             <div class="card-title-row">
@@ -58,7 +58,7 @@ async function muatHeroKatalog() {
 
     container.innerHTML = `
         <div class="hero-katalog-grid">
-            ${heroProducts.map(produk => {
+            ${heroProducts.map((produk, index) => {
         let mainImg = fallbackImage;
         if (Array.isArray(produk.gambar_url) && produk.gambar_url.length > 0) {
             mainImg = produk.gambar_url[0];
@@ -66,7 +66,7 @@ async function muatHeroKatalog() {
             mainImg = produk.gambar_url;
         }
         return `
-                    <a href="detail-produk.html?id=${produk.id}" class="hero-katalog-item">
+                    <a href="detail-produk.html?id=${produk.id}" class="hero-katalog-item animate-on-scroll" style="transition-delay: ${index * 0.15}s">
                         <img src="${mainImg}" alt="${produk.nama}" class="hero-katalog-img">
                     </a>
                 `;
@@ -303,7 +303,7 @@ async function muatKelola() {
 
     const fallbackImage = 'https://images.unsplash.com/photo-1612015900986-4c4d017d1648?auto=format&fit=crop&w=100&q=80';
 
-    container.innerHTML = produkList.map(p => {
+    container.innerHTML = produkList.map((p, index) => {
         let mainImg = fallbackImage;
         if (Array.isArray(p.gambar_url) && p.gambar_url.length > 0) {
             mainImg = p.gambar_url[0];
@@ -312,7 +312,7 @@ async function muatKelola() {
         }
 
         return `
-        <div class="admin-item">
+        <div class="admin-item animate-on-scroll" style="transition-delay: ${index * 0.05}s">
             <img src="${mainImg}" alt="${p.nama}" class="admin-item-img">
             <div class="admin-item-info">
                 <div class="admin-item-title">${p.nama}</div>
